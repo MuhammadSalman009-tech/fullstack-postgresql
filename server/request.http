@@ -1,0 +1,28 @@
+### Sign Up User
+POST http://localhost:5000/api/auth/signup HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "test4@test.com",
+    "password": "12345678",
+    "username": "test4"
+}
+
+
+### Sign In User
+POST http://localhost:5000/api/auth/signin HTTP/1.1
+Content-Type: application/json
+
+{
+	"email":"ejaz@gmail.com",
+	"password":"12345678"
+}
+
+
+### Sign Out
+POST http://localhost:5000/api/auth/signout HTTP/1.1
+Content-Type: application/json
+
+
+### Fetch posts
+GET http://localhost:5000/api/users/ba09dd5f-381e-431b-b4da-c3ab9bab8f73
