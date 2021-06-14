@@ -2,44 +2,31 @@ import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Router from "next/router";
-interface SignUpFormInputs {
-  name: string;
+interface SignInFormInputs {
   email: string;
   password: string;
-  gender: string;
 }
-function SignUp() {
+function SignIn() {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit: SubmitHandler<SignUpFormInputs> = async (formData) => {
+  const onSubmit: SubmitHandler<SignInFormInputs> = async (formData) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/signup",
-        formData
+        "http://localhost:5000/api/auth/signin",
+        formData,
+        { withCredentials: true }
       );
       Router.push("/");
     } catch (error) {
-      console.log(error.response);
+      console.error(error.response);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* name */}
-      <div className="mb-3">
-        <label htmlFor="name" className="form-label">
-          Name
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          {...register("name", { required: true })}
-        />
-        <div>{errors.name && "Name is required"}</div>
-      </div>
       {/* email */}
       <div className="mb-3">
         <label htmlFor="email" className="form-label">
@@ -64,21 +51,6 @@ function SignUp() {
         />
         <div>{errors.password && "Password is required"}</div>
       </div>
-      {/* gender */}
-      <div>
-        <label htmlFor="gender">Gender</label>
-        <br />
-        <select
-          className="form-select mt-2"
-          {...register("gender", { required: true })}
-        >
-          <option value={1}>Male</option>
-          <option value={0}>Female</option>
-        </select>
-        <div>{errors.gender && "Gender is required"}</div>
-      </div>
-      <br />
-
       {/* submit button */}
       <button type="submit" className="btn btn-primary">
         Submit
@@ -87,4 +59,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default SignIn;

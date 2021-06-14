@@ -5,14 +5,22 @@ import { postRouter } from "./routes/postsRouter";
 import { userRouter } from "./routes/userRouter";
 import { authRouter } from "./routes/authRouter";
 import cookieSession from "cookie-session";
-
+import cors from "cors";
 dotenv.config();
 
 const app = express();
 
 app.use(
   cookieSession({
-    signed: false,
+    name: "jwt",
+    keys: ["salman"],
+  })
+);
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
   })
 );
 app.use(express.json());
