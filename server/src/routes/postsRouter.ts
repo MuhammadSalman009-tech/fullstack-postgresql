@@ -2,8 +2,20 @@ import express from "express";
 import { pool } from "../db";
 import { requireAuth } from "../middleware/AuthMiddleware";
 import { PostRepository } from "../repos/PostRepository";
-const postRouter = express.Router();
+import multer from "multer";
 
+//post router object
+const postRouter = express.Router();
+//multer image uploading
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 //list all posts
 postRouter.get("/", async (req, res) => {
   const posts = await PostRepository.findMany();
@@ -11,19 +23,23 @@ postRouter.get("/", async (req, res) => {
 });
 
 //create a post
-postRouter.post("/", requireAuth, async (req, res) => {
+postRouter.post("/", requireAuth, upload.single("image"), async (req, res) => {
   const body = req.body;
-  const user = (req as any).user;
-  if (!body?.description || !body?.image) return res.status(400);
+  const user = req.user;
+  if (!body?.description || !body?.title || !req.file.fieldname)
+    return res.status(400).json({ msg: "all fileds are required" });
   try {
     const newPost = await PostRepository.insertOne(
       body.description,
-      body.image,
-      user.userID
+      req.file.path,
+      user.userID,
+      body.title
     );
-    return res.status(201).send("post created successfully!");
+    console.log(newPost);
+    //returning response
+    return res.status(201).json({ msg: "post created successfully!" });
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).json(error);
   }
 });
 

@@ -24,7 +24,7 @@ MyApp.getInitialProps = async (context: AppContext) => {
       const { data } = await axios.get(
         "http://localhost:5000/api/auth/current",
         {
-          headers: context.ctx,
+          headers: context.ctx.req.headers,
         }
       );
       user = data;
@@ -38,7 +38,7 @@ MyApp.getInitialProps = async (context: AppContext) => {
       user = data;
     }
   } catch (error) {
-    console.error(error?.response?.data);
+    console.error(error.response);
   }
 
   return {

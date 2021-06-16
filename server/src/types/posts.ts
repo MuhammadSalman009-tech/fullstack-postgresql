@@ -1,5 +1,6 @@
 export interface PostsWithUser {
   id: string;
+  title: string;
   description: string;
   image: string;
   uName: string;
@@ -14,4 +15,5 @@ export interface Post {
   user_id: string;
   created_at: string;
   upadated_at: string;
+  title: string;
 }

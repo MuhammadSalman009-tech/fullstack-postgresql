@@ -18,7 +18,8 @@ function SignUp() {
     try {
       const { data } = await axios.post(
         "http://localhost:5000/api/auth/signup",
-        formData
+        formData,
+        { withCredentials: true }
       );
       Router.push("/");
     } catch (error) {

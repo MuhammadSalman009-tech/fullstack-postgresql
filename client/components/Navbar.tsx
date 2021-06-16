@@ -59,9 +59,14 @@ function Navbar({ user }: NavbarPorps) {
               <React.Fragment>
                 <li className="nav-item">{user.username}</li>
                 <li className="nav-item">
-                  <button className="btn btn-primary" onClick={signOut}>
+                  <button className="btn btn-warning" onClick={signOut}>
                     Sign Out
                   </button>
+                </li>
+                <li className="nav-item">
+                  <Link href="/posts/create">
+                    <a className="btn btn-primary">Create Post</a>
+                  </Link>
                 </li>
               </React.Fragment>
             ) : (

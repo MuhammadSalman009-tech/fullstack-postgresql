@@ -23,6 +23,10 @@ app.use(
     credentials: true,
   })
 );
+
+//images endpoint
+app.use("/uploads", express.static("uploads"));
+//json middleware
 app.use(express.json());
 //posts endpoint
 app.use("/api/posts", postRouter);

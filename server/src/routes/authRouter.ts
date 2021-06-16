@@ -7,7 +7,6 @@ const authRouter = express.Router();
 
 //signup endpoint
 authRouter.post("/signup", async (req, res) => {
-  console.log(Boolean(req.body.gender));
   try {
     const body = req.body;
     const gender = Boolean(req.body.gender);
@@ -79,13 +78,11 @@ authRouter.post("/signin", async (req, res) => {
 
 //current user
 authRouter.get("/signout", async (req, res) => {
-  console.log("got request");
   req.session = null;
   res.status(200).json({ msg: "Logout Successfull!" });
 });
 //current user
 authRouter.get("/current", requireAuth, async (req, res) => {
-  console.log("got request");
   res.status(200).json((req as any).user);
 });
 export { authRouter };
