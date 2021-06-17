@@ -19,29 +19,37 @@ export default function Home({ posts }: HomeProps) {
     setData(posts);
   }, []);
   const likePost = async (postId: string) => {
-    const { data } = await axios.post(
-      "http://localhost:5000/api/posts/like",
-      {
-        post_id: postId,
-      },
-      { withCredentials: true }
-    );
-    const res = await axios.get<Post[]>("http://localhost:5000/api/posts");
-    setData(res.data);
-    setLiked(true);
+    try {
+      const { data } = await axios.put(
+        "http://localhost:5000/api/posts/like",
+        {
+          post_id: postId,
+        },
+        { withCredentials: true }
+      );
+      const res = await axios.get<Post[]>("http://localhost:5000/api/posts");
+      setData(res.data);
+      if (data.msg == "liked") {
+        setLiked(true);
+      } else {
+        setLiked(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const unLikePost = async (postId: string) => {
-    const { data } = await axios.put(
-      "http://localhost:5000/api/posts/like",
-      {
-        post_id: postId,
-      },
-      { withCredentials: true }
-    );
-    const res = await axios.get<Post[]>("http://localhost:5000/api/posts");
-    setData(res.data);
-    setLiked(false);
-  };
+  // const unLikePost = async (postId: string) => {
+  //   const { data } = await axios.put(
+  //     "http://localhost:5000/api/posts/like",
+  //     {
+  //       post_id: postId,
+  //     },
+  //     { withCredentials: true }
+  //   );
+  //   const res = await axios.get<Post[]>("http://localhost:5000/api/posts");
+  //   setData(res.data);
+  //   setLiked(false);
+  // };
   return (
     <div className={styles.container}>
       <Head>
@@ -66,14 +74,14 @@ export default function Home({ posts }: HomeProps) {
               <li className="list-group-item">{item.created_at}</li>
               <li className="list-group-item">
                 <strong>Likes: </strong>
-                {item.likes}
+                {item.likes.length}
               </li>
               <li className="list-group-item">
                 {liked ? (
                   <IconButton
                     onClick={(
                       event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                    ) => unLikePost(item.id)}
+                    ) => likePost(item.id)}
                   >
                     <ThumbUpAltIcon color="primary" />
                   </IconButton>
