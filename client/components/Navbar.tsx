@@ -29,6 +29,7 @@ function Navbar({ user }: NavbarPorps) {
       console.error(error.response);
     }
   };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">

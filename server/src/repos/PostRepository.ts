@@ -4,15 +4,10 @@ import { Post, PostsWithUser } from "../types/posts";
 export class PostRepository {
   static async findMany(): Promise<PostsWithUser[]> {
     const postsWithUser =
-      await pool.query<PostsWithUser>(`SELECT p.id,p.title,p.description,p.image,u.name,p.created_at,count(pr.type) as likes,count(c.post_id) as comments 
+      await pool.query<PostsWithUser>(`SELECT p.id,p.title,p.description,p.image,p.likes,u.name,p.created_at
         FROM posts as p
-        LEFT JOIN post_reactions as pr
-        ON pr.post_id=p.id
         LEFT JOIN users as u
-        ON u.id=p.user_id
-        LEFT JOIN comments as c
-        ON c.post_id=p.id
-        GROUP BY p.id,p.title,p.description,p.image,u.name,p.created_at`);
+        ON u.id=p.user_id`);
 
     return postsWithUser.rows;
   }

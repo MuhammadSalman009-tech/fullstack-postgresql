@@ -6,16 +6,19 @@ import { userRouter } from "./routes/userRouter";
 import { authRouter } from "./routes/authRouter";
 import cookieSession from "cookie-session";
 import cors from "cors";
+import { postLikeRouter } from "./routes/postLikesRouter";
 dotenv.config();
 
 const app = express();
 
+//cookie-session middleware
 app.use(
   cookieSession({
     name: "jwt",
     keys: ["salman"],
   })
 );
+//cors middleware
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -23,11 +26,12 @@ app.use(
     credentials: true,
   })
 );
+//json middleware
+app.use(express.json());
 
 //images endpoint
 app.use("/uploads", express.static("uploads"));
-//json middleware
-app.use(express.json());
+
 //posts endpoint
 app.use("/api/posts", postRouter);
 
@@ -36,6 +40,9 @@ app.use("/api/users", userRouter);
 
 //Auth endpoint
 app.use("/api/auth", authRouter);
+
+//post-likes endpoint
+app.use("/api/posts/like", postLikeRouter);
 
 app.listen(5000, () => {
   console.log("listnning on port 5000...");

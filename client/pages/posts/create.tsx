@@ -21,7 +21,6 @@ function create() {
     postData.append("title", formData.title);
     postData.append("description", formData.description);
     postData.append("image", formData.image[0]);
-    console.log(postData);
     try {
       const { data } = await axios.post(
         "http://localhost:5000/api/posts",

@@ -53,7 +53,7 @@ function SignIn() {
       </div>
       {/* submit button */}
       <button type="submit" className="btn btn-primary">
-        Submit
+        Sign In
       </button>
     </form>
   );

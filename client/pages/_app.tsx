@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "font-awesome/css/font-awesome.min.css";
 import { AppContext, AppProps } from "next/app";
 import Layout from "../components/Layout";
 import axios from "axios";
@@ -20,7 +21,7 @@ export default MyApp;
 MyApp.getInitialProps = async (context: AppContext) => {
   let user = null;
   try {
-    if (window === "undefined") {
+    if (typeof window === "undefined") {
       const { data } = await axios.get(
         "http://localhost:5000/api/auth/current",
         {
@@ -38,7 +39,7 @@ MyApp.getInitialProps = async (context: AppContext) => {
       user = data;
     }
   } catch (error) {
-    console.error(error.response);
+    console.error("error: " + error.response);
   }
 
   return {

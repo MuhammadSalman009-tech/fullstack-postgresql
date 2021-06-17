@@ -82,7 +82,7 @@ function SignUp() {
 
       {/* submit button */}
       <button type="submit" className="btn btn-primary">
-        Submit
+        Sign Up
       </button>
     </form>
   );
