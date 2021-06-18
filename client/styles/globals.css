@@ -15,3 +15,9 @@ a {
 * {
   box-sizing: border-box;
 }
+.comment {
+  margin-top: 5px;
+  background-color: #ddd;
+  padding: 5px;
+  border-radius: 3px;
+}

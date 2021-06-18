@@ -39,7 +39,7 @@ MyApp.getInitialProps = async (context: AppContext) => {
       user = data;
     }
   } catch (error) {
-    console.error("error: " + error.response);
+    console.error("error: " + error);
   }
 
   return {
