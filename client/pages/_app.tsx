@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps, currentUser }: MyCustomAppProps) {
   return (
     <Layout user={currentUser}>
       <div className="container">
-        <Component {...pageProps} />
+        <Component {...pageProps} user={currentUser} />
       </div>
     </Layout>
   );
@@ -39,7 +39,7 @@ MyApp.getInitialProps = async (context: AppContext) => {
       user = data;
     }
   } catch (error) {
-    console.error("error: " + error);
+    console.error("error: " + error.response);
   }
 
   return {

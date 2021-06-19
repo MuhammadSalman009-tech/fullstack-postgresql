@@ -5,52 +5,59 @@ import { requireAuth } from "../middleware/AuthMiddleware";
 //post router object
 const postLikeRouter = express.Router();
 
-//Create Like
-// postLikeRouter.post("/", requireAuth, async (req, res) => {
-//   const body = req.body;
-//   const user = req.user;
-//   const postLikes = await pool.query(`SELECT likes FROM posts WHERE id=$1`, [
-//     body.post_id,
-//   ]);
-//   const n = postLikes.rows[0].likes;
-//   const updateLikes = await pool.query(
-//     `UPDATE posts SET likes=$1+1 WHERE id=$2`,
-//     [n, body.post_id]
-//   );
-//   const newLike = await pool.query(
-//     `INSERT INTO post_reactions(id,user_id,post_id,created_at,updated_at)
-//     VALUES(gen_random_uuid(),$1,$2,now(),now())`,
-//     [user.userID, body.post_id]
-//   );
-//   res.json({ msg: "Post liked successfully" });
-// });
-
-//Update Like / Unlike
-postLikeRouter.put("/", requireAuth, async (req, res) => {
+//Like / Unlike a post
+postLikeRouter.post("/", requireAuth, async (req, res) => {
   const body = req.body;
   const user = req.user;
-  var unliked;
-  var liked;
+  //check if the user already liked the post or not
   const result = await pool.query(
-    `select ARRAY_POSITION(likes,$1) as index from posts where id=$2`,
+    `SELECT * FROM post_reactions WHERE user_id=$1
+    AND post_id=$2`,
     [user.userID, body.post_id]
   );
-  console.log(result.rows[0].index);
-  if (result.rows[0].index > 0) {
-    unliked = await pool.query(
-      `UPDATE posts SET likes=array_remove(likes,$1) where id=$2`,
-      [user.userID, body.post_id]
+  //if liked then unlike and vice versa
+  if (result.rowCount > 0) {
+    const unlike = await pool.query(
+      `DELETE from post_reactions WHERE post_id=$1 AND user_id=$2 `,
+      [body.post_id, user.userID]
     );
-    console.log(unliked);
+    const res1 = await pool.query(`SELECT likes from posts where id=$1`, [
+      body.post_id,
+    ]);
+    const n1 = res1.rows[0].likes;
+    const decreamentLike = await pool.query(
+      `UPDATE posts set likes=$1-1 where id=$2`,
+      [n1, body.post_id]
+    );
+    res.status(200).json({ msg: "unliked" });
   } else {
-    liked = await pool.query(
-      `UPDATE posts SET likes=array_append(likes,$1) where id=$2`,
-      [user.userID, body.post_id]
+    const like = await pool.query(
+      `INSERT INTO post_reactions(id,post_id,user_id,created_at,updated_at)
+        values(gen_random_uuid(),$1,$2,NOW(),NOW())`,
+      [body.post_id, user.userID]
     );
-    console.log(liked);
+    const res2 = await pool.query(`SELECT likes from posts where id=$1`, [
+      body.post_id,
+    ]);
+    const n2 = res2.rows[0].likes;
+    const inreamentLike = await pool.query(
+      `UPDATE posts set likes=$1+1 where id=$2`,
+      [n2, body.post_id]
+    );
+    res.status(200).json({ msg: "liked" });
   }
-  if (liked) return res.status(200).json({ msg: "liked" });
-  return res.status(200).json({ msg: "unliked" });
 });
+
+//get number of likes on a post
+// postLikeRouter.post("/all", async (req, res) => {
+//   const body = req.body;
+//   const result = await pool.query(
+//     `select COUNT(*) as likes from post_reactions WHERE post_id=$1`,
+//     [body.post_id]
+//   );
+//   const likes = result.rows[0].likes;
+
+//   res.status(200).json({ likes: likes });
+// });
 
 export { postLikeRouter };
