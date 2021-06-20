@@ -10,7 +10,7 @@ postCommentRouter.post("/all", async (req, res) => {
   const body = req.body;
   try {
     const result = await pool.query(
-      `select c.description,c.created_at,c.id,u.name 
+      `select c.post_id,c.description,c.created_at,c.id,u.name 
       from comments as c 
       inner join users as u 
       ON u.id = c.user_id 
@@ -36,7 +36,6 @@ postCommentRouter.post("/", requireAuth, async (req, res) => {
       `INSERT INTO comments(id,description,user_id,post_id,created_at) values(gen_random_uuid(),$1,$2,$3,NOW())`,
       [body.description, user.userID, body.post_id]
     );
-    console.log(result);
     return res.status(201).json({ msg: "Comment created successfully!" });
   } catch (error) {
     console.log(error);

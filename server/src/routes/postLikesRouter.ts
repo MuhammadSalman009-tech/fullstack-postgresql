@@ -49,15 +49,15 @@ postLikeRouter.post("/", requireAuth, async (req, res) => {
 });
 
 //get number of likes on a post
-// postLikeRouter.post("/all", async (req, res) => {
-//   const body = req.body;
-//   const result = await pool.query(
-//     `select COUNT(*) as likes from post_reactions WHERE post_id=$1`,
-//     [body.post_id]
-//   );
-//   const likes = result.rows[0].likes;
+postLikeRouter.post("/all", async (req, res) => {
+  const body = req.body;
+  const result = await pool.query(
+    `select COUNT(*) as likes from post_reactions WHERE post_id=$1`,
+    [body.post_id]
+  );
+  const likes = result.rows[0].likes;
 
-//   res.status(200).json({ likes: likes });
-// });
+  res.status(200).json({ likes: likes });
+});
 
 export { postLikeRouter };

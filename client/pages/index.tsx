@@ -1,31 +1,24 @@
 import axios from "axios";
 import { GetServerSideProps } from "next";
-import { AppContext } from "next/app";
 import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import { Post } from "../types/postTypes";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
-import { Button, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import CommentIcon from "@material-ui/icons/Comment";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Comment } from "../types/comments";
 import { User } from "../types/user";
-import { SyntheticEvent } from "react";
-import Likes from "../components/Likes";
+import CommentList from "../components/comments/CommentList";
+import TotalLikes from "../components/likes/TotalLikes";
 
 interface HomeProps {
   postsData: Post[];
   user: User;
 }
-interface CommentFormInputs {
-  comment: string;
-  post_id: string;
-}
+
 export default function Home({ postsData, user }: HomeProps) {
   const [liked, setLiked] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState([]);
   const [hide, setHide] = useState(true);
   useEffect(() => {
     setPosts(postsData);
@@ -56,48 +49,6 @@ export default function Home({ postsData, user }: HomeProps) {
     }
   };
 
-  //create comment
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const createPostComment: SubmitHandler<CommentFormInputs> = async (
-    commentData
-  ) => {
-    console.log(commentData);
-    try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/posts/comment",
-        {
-          post_id: commentData.post_id,
-          description: commentData.comment,
-        },
-        { withCredentials: true }
-      );
-      console.log(data);
-      fetchComments(commentData.post_id);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  //fetch comments
-  const fetchComments = async (postId: string) => {
-    setHide(!hide);
-    try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/posts/comment/all",
-        {
-          post_id: postId,
-        },
-        { withCredentials: true }
-      );
-
-      setComments(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <div className={styles.container}>
       <Head>
@@ -127,6 +78,7 @@ export default function Home({ postsData, user }: HomeProps) {
                   Likes:
                 </strong>
                 {item.likes}
+                {/* <TotalLikes postId={item.id} /> */}
               </li>
               <li className="list-group-item">
                 <IconButton
@@ -136,42 +88,12 @@ export default function Home({ postsData, user }: HomeProps) {
                 >
                   <ThumbUpAltIcon htmlColor={liked ? "primary" : ""} />
                 </IconButton>
-                <IconButton
-                  onClick={(
-                    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                  ) => fetchComments(item.id)}
-                >
+                <IconButton onClick={() => setHide(!hide)}>
                   <CommentIcon />
                 </IconButton>
               </li>
               <li className="list-group-item">
-                <h3>Comments</h3>
-                <form onSubmit={handleSubmit(createPostComment)}>
-                  <input
-                    type="text"
-                    {...register("comment", { required: true })}
-                    className="form-control"
-                    placeholder="Write a comment..."
-                  />
-                  <input
-                    type="text"
-                    {...register("post_id", { required: true })}
-                    value={item.id}
-                    hidden
-                  />
-                  <button className="btn btn-primary btn-sm">Comment</button>
-                </form>
-                {hide ? (
-                  <div></div>
-                ) : (
-                  comments.map((comment) => (
-                    <div className="comment" key={comment.id}>
-                      <h6>{comment.name}</h6>
-                      <p>{comment.description}</p>
-                      <p>{comment.created_at}</p>
-                    </div>
-                  ))
-                )}
+                {hide ? <div></div> : <CommentList postId={item.id} />}
               </li>
             </ul>
           </div>
