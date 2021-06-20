@@ -4,9 +4,10 @@ import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 interface CommentListProps {
   postId: string;
+  show: string;
 }
 
-function CommentList({ postId }: CommentListProps) {
+function CommentList({ postId, show }: CommentListProps) {
   const [comments, setComments] = useState([]);
   //fetch comments
   useEffect(() => {
@@ -26,7 +27,7 @@ function CommentList({ postId }: CommentListProps) {
       console.log(error);
     }
   };
-  return (
+  return show === postId ? (
     <div>
       <CreateComment
         postId={postId}
@@ -36,6 +37,8 @@ function CommentList({ postId }: CommentListProps) {
         <Comment comment={item} key={item.id} />
       ))}
     </div>
+  ) : (
+    <div></div>
   );
 }
 

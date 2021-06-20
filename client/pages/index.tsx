@@ -20,6 +20,8 @@ export default function Home({ postsData, user }: HomeProps) {
   const [liked, setLiked] = useState(false);
   const [posts, setPosts] = useState([]);
   const [hide, setHide] = useState(true);
+  const [show, setShow] = useState("");
+
   useEffect(() => {
     setPosts(postsData);
   }, []);
@@ -59,28 +61,33 @@ export default function Home({ postsData, user }: HomeProps) {
       {/* render all posts */}
       {posts.map((item) => {
         return (
-          <div className="card mt-3" style={{ width: "550px" }} key={item.id}>
+          <div className="card mt-4" style={{ width: "550px" }} key={item.id}>
+            <div className="card-header">
+              <span>
+                <strong>{item.name}</strong>
+              </span>
+              <span>{item.created_at.split("T")[0]}</span>
+            </div>
             <img
               className="card-img-top"
               src={`http://localhost:5000/${item.image}`}
               alt={item.title}
             />
             <div className="card-body">
-              <h5 className="card-title">{item.title}</h5>
+              <h5 className="card-title">
+                <strong>{item.title}</strong>
+              </h5>
               <p className="card-text">{item.description}</p>
-            </div>
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">{item.name}</li>
-              <li className="list-group-item">{item.created_at}</li>
-              <li className="list-group-item">
+
+              <div>
                 <strong>
                   {/* <Likes postId={item.id} /> */}
                   Likes:
                 </strong>
                 {item.likes}
                 {/* <TotalLikes postId={item.id} /> */}
-              </li>
-              <li className="list-group-item">
+              </div>
+              <div>
                 <IconButton
                   onClick={(
                     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -88,14 +95,27 @@ export default function Home({ postsData, user }: HomeProps) {
                 >
                   <ThumbUpAltIcon htmlColor={liked ? "primary" : ""} />
                 </IconButton>
-                <IconButton onClick={() => setHide(!hide)}>
+                <IconButton
+                  onClick={() => {
+                    if (show !== item.id) {
+                      setHide(false);
+                      setShow(item.id);
+                    } else {
+                      setHide(true);
+                    }
+                  }}
+                >
                   <CommentIcon />
                 </IconButton>
-              </li>
-              <li className="list-group-item">
-                {hide ? <div></div> : <CommentList postId={item.id} />}
-              </li>
-            </ul>
+              </div>
+              <div>
+                {hide ? (
+                  <div></div>
+                ) : (
+                  <CommentList postId={item.id} show={show} />
+                )}
+              </div>
+            </div>
           </div>
         );
       })}
