@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Router from "next/router";
+import { baseURL } from "../../types/urls";
 interface SignUpFormInputs {
   name: string;
   email: string;
@@ -17,7 +18,7 @@ function SignUp() {
   const onSubmit: SubmitHandler<SignUpFormInputs> = async (formData) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/signup",
+        `${baseURL}/api/auth/signup`,
         formData,
         { withCredentials: true }
       );
@@ -70,7 +71,7 @@ function SignUp() {
         <label htmlFor="gender">Gender</label>
         <br />
         <select
-          className="form-select mt-2"
+          className="form-control mt-2"
           {...register("gender", { required: true })}
         >
           <option value={1}>Male</option>

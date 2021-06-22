@@ -3,27 +3,17 @@ import Link from "next/link";
 import axios from "axios";
 import Router from "next/router";
 import { GetServerSideProps } from "next";
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   console.log(context);
-//   const { data } = await axios.get("http://localhost:5000/api/auth/current");
-//   console.log(data);
+import { baseURL } from "../types/urls";
 
-//   return {
-//     props: {
-//       user: data,
-//     },
-//   };
-// };
 interface NavbarPorps {
   user: { id: string; username: string; iat: number };
 }
 function Navbar({ user }: NavbarPorps) {
   const signOut = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/auth/signout",
-        { withCredentials: true }
-      );
+      const { data } = await axios.get(`${baseURL}/api/auth/signout`, {
+        withCredentials: true,
+      });
       Router.push("/auth/signin");
     } catch (error) {
       console.error(error.response);

@@ -1,5 +1,4 @@
 import express from "express";
-import { pool } from "../db";
 import { requireAuth } from "../middleware/AuthMiddleware";
 import { PostRepository } from "../repos/PostRepository";
 import multer from "multer";
@@ -18,6 +17,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 //list all posts
 postRouter.get("/", async (req, res) => {
+  console.log("got request");
+
   const posts = await PostRepository.findMany();
   res.json(posts);
 });
@@ -47,7 +48,7 @@ postRouter.post("/", requireAuth, upload.single("image"), async (req, res) => {
 postRouter.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const post = PostRepository.findById(id);
+    const post = await PostRepository.findById(id);
     res.status(200).send(post);
   } catch (error) {
     return res.status(500).send(error);
@@ -55,11 +56,14 @@ postRouter.get("/:id", async (req, res) => {
 });
 
 //delete a post
-postRouter.delete("/:id", async (req, res) => {
+postRouter.delete("/:id", requireAuth, async (req, res) => {
   const id = req.params.id;
-  const deletedPost = await pool.query("DELETE FROM posts WHERE p.id=$1", [id]);
-  console.log("deleted");
-
-  res.json(deletedPost);
+  const user = req.user;
+  try {
+    const deletedPostCount = await PostRepository.deleteOne(id, user.userID);
+    res.status(200).json({ deletedPostCount });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 });
 export { postRouter };

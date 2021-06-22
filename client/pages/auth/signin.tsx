@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Router from "next/router";
+import { baseURL } from "../../types/urls";
 interface SignInFormInputs {
   email: string;
   password: string;
@@ -15,7 +16,7 @@ function SignIn() {
   const onSubmit: SubmitHandler<SignInFormInputs> = async (formData) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/signin",
+        `${baseURL}/api/auth/signin`,
         formData,
         { withCredentials: true }
       );

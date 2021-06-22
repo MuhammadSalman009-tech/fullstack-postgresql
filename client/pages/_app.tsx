@@ -4,6 +4,7 @@ import "font-awesome/css/font-awesome.min.css";
 import { AppContext, AppProps } from "next/app";
 import Layout from "../components/Layout";
 import axios from "axios";
+import { baseURL } from "../types/urls";
 interface MyCustomAppProps extends AppProps {
   currentUser: { id: string; username: string; iat: number };
 }
@@ -22,20 +23,14 @@ MyApp.getInitialProps = async (context: AppContext) => {
   let user = null;
   try {
     if (typeof window === "undefined") {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/auth/current",
-        {
-          headers: context.ctx.req.headers,
-        }
-      );
+      const { data } = await axios.get(`${baseURL}/api/auth/current`, {
+        headers: context.ctx.req.headers,
+      });
       user = data;
     } else {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/auth/current",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get(`${baseURL}/api/auth/current`, {
+        withCredentials: true,
+      });
       user = data;
     }
   } catch (error) {

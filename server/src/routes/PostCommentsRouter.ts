@@ -1,6 +1,7 @@
 import express from "express";
 import { pool } from "../db";
 import { requireAuth } from "../middleware/AuthMiddleware";
+import { CommentRepository } from "../repos/CommentRepository";
 
 //post router object
 const postCommentRouter = express.Router();
@@ -9,16 +10,7 @@ const postCommentRouter = express.Router();
 postCommentRouter.post("/all", async (req, res) => {
   const body = req.body;
   try {
-    const result = await pool.query(
-      `select c.post_id,c.description,c.created_at,c.id,u.name 
-      from comments as c 
-      inner join users as u 
-      ON u.id = c.user_id 
-      inner join posts as p ON p.id=c.post_id 
-      WHERE c.post_id=$1`,
-      [body.post_id]
-    );
-    const comments = result.rows;
+    const comments = await CommentRepository.findManyById(body.post_id);
     res.status(200).json(comments);
   } catch (error) {
     console.log(error);
@@ -32,9 +24,10 @@ postCommentRouter.post("/", requireAuth, async (req, res) => {
   if (!body?.description || !body?.post_id)
     return res.status(400).send("comment can not be empty");
   try {
-    const result = await pool.query(
-      `INSERT INTO comments(id,description,user_id,post_id,created_at) values(gen_random_uuid(),$1,$2,$3,NOW())`,
-      [body.description, user.userID, body.post_id]
+    const newCommentCount = await CommentRepository.insertOne(
+      body.description,
+      body.post_id,
+      user.userID
     );
     return res.status(201).json({ msg: "Comment created successfully!" });
   } catch (error) {

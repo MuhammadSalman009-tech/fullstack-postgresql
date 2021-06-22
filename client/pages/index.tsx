@@ -4,12 +4,9 @@ import Head from "next/head";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import { Post } from "../types/postTypes";
-import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
-import { IconButton } from "@material-ui/core";
-import CommentIcon from "@material-ui/icons/Comment";
 import { User } from "../types/user";
-import CommentList from "../components/comments/CommentList";
-import TotalLikes from "../components/likes/TotalLikes";
+import { baseURL } from "../types/urls";
+import PostCard from "../components/posts/PostCard";
 
 interface HomeProps {
   postsData: Post[];
@@ -17,37 +14,19 @@ interface HomeProps {
 }
 
 export default function Home({ postsData, user }: HomeProps) {
-  const [liked, setLiked] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [hide, setHide] = useState(true);
-  const [show, setShow] = useState("");
 
   useEffect(() => {
     setPosts(postsData);
   }, []);
-  // like/unlike a post
-  const likePost = async (postId: string) => {
-    if (user) {
-      try {
-        const { data } = await axios.post(
-          "http://localhost:5000/api/posts/like",
-          {
-            post_id: postId,
-          },
-          { withCredentials: true }
-        );
-        const res = await axios.get<Post[]>("http://localhost:5000/api/posts");
-        setPosts(res.data);
-        if (data.msg == "liked") {
-          setLiked(true);
-        } else {
-          setLiked(false);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      console.log("please login before like");
+  //fetch posts and set posts
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get<Post[]>(`${baseURL}/api/posts`);
+      console.log(res.data);
+      setPosts(res.data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -61,69 +40,19 @@ export default function Home({ postsData, user }: HomeProps) {
       {/* render all posts */}
       {posts.map((item) => {
         return (
-          <div className="card mt-4" style={{ width: "550px" }} key={item.id}>
-            <div className="card-header">
-              <span>
-                <strong>{item.name}</strong>
-              </span>
-              <span>{item.created_at.split("T")[0]}</span>
-            </div>
-            <img
-              className="card-img-top"
-              src={`http://localhost:5000/${item.image}`}
-              alt={item.title}
-            />
-            <div className="card-body">
-              <h5 className="card-title">
-                <strong>{item.title}</strong>
-              </h5>
-              <p className="card-text">{item.description}</p>
-
-              <div>
-                <strong>
-                  {/* <Likes postId={item.id} /> */}
-                  Likes:
-                </strong>
-                {item.likes}
-                {/* <TotalLikes postId={item.id} /> */}
-              </div>
-              <div>
-                <IconButton
-                  onClick={(
-                    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                  ) => likePost(item.id)}
-                >
-                  <ThumbUpAltIcon htmlColor={liked ? "primary" : ""} />
-                </IconButton>
-                <IconButton
-                  onClick={() => {
-                    if (show !== item.id) {
-                      setHide(false);
-                      setShow(item.id);
-                    } else {
-                      setHide(true);
-                    }
-                  }}
-                >
-                  <CommentIcon />
-                </IconButton>
-              </div>
-              <div>
-                {hide ? (
-                  <div></div>
-                ) : (
-                  <CommentList postId={item.id} show={show} />
-                )}
-              </div>
-            </div>
-          </div>
+          <PostCard
+            post={item}
+            user={user}
+            fetchPosts={fetchPosts}
+            key={item.id}
+          />
         );
       })}
     </div>
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data } = await axios.get<Post[]>("http://localhost:5000/api/posts");
+  const { data } = await axios.get<Post[]>(`${baseURL}/api/posts`);
 
   return {
     props: {

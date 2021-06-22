@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Router from "next/router";
+import { baseURL } from "../../types/urls";
 interface PostFormInputs {
   title: string;
   description: string;
@@ -22,11 +23,9 @@ function create() {
     postData.append("description", formData.description);
     postData.append("image", formData.image[0]);
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/posts",
-        postData,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post(`${baseURL}/api/posts`, postData, {
+        withCredentials: true,
+      });
       Router.push("/");
     } catch (error) {
       console.log(error.response);

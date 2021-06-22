@@ -3,6 +3,7 @@ import { pool } from "../db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "../middleware/AuthMiddleware";
+import { AuthRepository } from "../repos/AuthRepository";
 const authRouter = express.Router();
 
 //signup endpoint
@@ -12,24 +13,21 @@ authRouter.post("/signup", async (req, res) => {
     const gender = Boolean(req.body.gender);
     if (!body?.name || !body?.email || !body?.password)
       return res.status(400).send("all fields are required");
-    const isValid = await pool.query("SELECT * FROM users WHERE email=$1", [
-      body.email,
-    ]);
-    if (isValid.rowCount > 0)
-      return res.status(400).send("user already exists");
+    const user = await AuthRepository.findByEmail(body.email);
+    if (user.rowCount > 0) return res.status(400).send("user already exists");
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(body.password, salt);
 
-    const user = await pool.query(
-      `INSERT INTO users(id,name,email,avatar,gender,created_at,updated_at,password)
-      VALUES(gen_random_uuid(),$1,$2,$3,$4,now(),now(),$5) returning id 
-      `,
-      [body.name, body.email, "avatar", gender, hashedPassword]
+    const userId = await AuthRepository.insertOne(
+      body.name,
+      body.email,
+      gender,
+      hashedPassword
     );
 
     const token = jwt.sign(
-      { userID: user.rows[0].id, username: body.name },
+      { userID: userId, username: body.name },
       process.env.JWT_KEY
     );
     req.session = { jwt: token };
@@ -49,9 +47,7 @@ authRouter.post("/signin", async (req, res) => {
     if (!body?.email || !body?.password)
       return res.status(400).send("all fields are required");
 
-    const user = await pool.query("SELECT * FROM users WHERE email=$1", [
-      body.email,
-    ]);
+    const user = await AuthRepository.findByEmail(body.email);
 
     if (user.rowCount === 0)
       return res.status(400).send("Invalid email or password");
@@ -83,6 +79,6 @@ authRouter.get("/signout", async (req, res) => {
 });
 //current user
 authRouter.get("/current", requireAuth, async (req, res) => {
-  res.status(200).json((req as any).user);
+  res.status(200).json(req.user);
 });
 export { authRouter };

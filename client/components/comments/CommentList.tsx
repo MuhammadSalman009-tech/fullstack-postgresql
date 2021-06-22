@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { baseURL } from "../../types/urls";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 interface CommentListProps {
@@ -16,7 +17,7 @@ function CommentList({ postId, show }: CommentListProps) {
   const fetchComments = async (postId: string) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/posts/comment/all",
+        `${baseURL}/api/posts/comment/all`,
         {
           post_id: postId,
         },
@@ -33,7 +34,7 @@ function CommentList({ postId, show }: CommentListProps) {
         postId={postId}
         getComments={() => fetchComments(postId)}
       />
-      {comments.map((item) => (
+      {comments?.map((item) => (
         <Comment comment={item} key={item.id} />
       ))}
     </div>

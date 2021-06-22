@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { baseURL } from "../types/urls";
 interface LikesProps {
   postId: string;
 }
@@ -12,7 +13,7 @@ function Likes({ postId }: LikesProps) {
     console.log("get likes");
     try {
       const { data } = await axios.post<data>(
-        "http://localhost:5000/api/posts/like/all",
+        `${baseURL}/api/posts/like/all`,
         {
           post_id: postId,
         },

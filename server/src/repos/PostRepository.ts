@@ -4,10 +4,14 @@ import { Post, PostsWithUser } from "../types/posts";
 export class PostRepository {
   static async findMany(): Promise<PostsWithUser[]> {
     const postsWithUser =
-      await pool.query<PostsWithUser>(`SELECT p.id,p.title,p.description,p.image,u.name,p.created_at,p.likes
-        FROM posts as p
-        LEFT JOIN users as u
-        ON u.id=p.user_id`);
+      await pool.query<PostsWithUser>(`SELECT p.id,p.title,p.description,p.user_id,p.image,u.name,p.created_at,count(pr.id) as likes
+      FROM posts as p
+      LEFT JOIN users as u
+      ON u.id=p.user_id
+      LEFT JOIN post_reactions pr
+      ON pr.post_id=p.id
+      GROUP BY p.id,p.title,p.description,p.user_id,p.image,u.name,p.created_at
+      ORDER BY p.created_at DESC`);
 
     return postsWithUser.rows;
   }
@@ -30,5 +34,12 @@ export class PostRepository {
       [id]
     );
     return postWithID.rows[0];
+  }
+  static async deleteOne(id: string, userID: string): Promise<number> {
+    const postWithID = await pool.query(
+      "DELETE FROM posts p WHERE p.id=$1 AND p.user_id=$2",
+      [id, userID]
+    );
+    return postWithID.rowCount;
   }
 }

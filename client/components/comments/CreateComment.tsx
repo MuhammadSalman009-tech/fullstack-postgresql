@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { baseURL } from "../../types/urls";
 interface CommentFormInputs {
   comment: string;
   post_id: string;
@@ -20,7 +21,7 @@ function CreateComment({ postId, getComments }: CreateCommentProps) {
     console.log(commentData);
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/posts/comment",
+        `${baseURL}/api/posts/comment`,
         {
           post_id: commentData.post_id,
           description: commentData.comment,

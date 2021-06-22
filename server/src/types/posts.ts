@@ -6,7 +6,7 @@ export interface PostsWithUser {
   uName: string;
   created_at: string;
   likes: number;
-  comments: number;
+  user_id: string;
 }
 export interface Post {
   id: string;

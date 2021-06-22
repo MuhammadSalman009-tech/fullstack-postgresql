@@ -1,13 +1,12 @@
 import express from "express";
-import { pool } from "./db";
 import dotenv from "dotenv";
-import { postRouter } from "./routes/postsRouter";
-import { userRouter } from "./routes/userRouter";
-import { authRouter } from "./routes/authRouter";
+import { postRouter } from "./routes/PostRouter";
+import { userRouter } from "./routes/UserRouter";
+import { authRouter } from "./routes/AuthRouter";
 import cookieSession from "cookie-session";
 import cors from "cors";
-import { postLikeRouter } from "./routes/postLikesRouter";
-import { postCommentRouter } from "./routes/postCommentsRouter";
+import { postLikeRouter } from "./routes/LikePostRouter";
+import { postCommentRouter } from "./routes/PostCommentsRouter";
 dotenv.config();
 
 const app = express();
@@ -23,7 +22,7 @@ app.use(
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
     credentials: true,
   })
 );

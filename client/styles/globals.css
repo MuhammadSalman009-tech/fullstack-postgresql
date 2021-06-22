@@ -26,3 +26,7 @@ a {
   justify-content: space-between;
   background-color: white !important;
 }
+.delete-section {
+  display: flex;
+  justify-content: space-between;
+}
