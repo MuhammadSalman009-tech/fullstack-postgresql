@@ -6,22 +6,22 @@ import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import { IconButton } from "@material-ui/core";
 interface LikePostProps {
   user: User;
-  postId: string;
-  fetchPosts(): void;
+  commentId: string;
+  fetchComments(): void;
 }
-function LikeComment({ user, fetchPosts, postId }: LikePostProps) {
-  // like/unlike a post
-  const likePost = async (postId: string) => {
+function Like({ user, fetchComments, commentId }: LikePostProps) {
+  // like/unlike a Comment
+  const likeComment = async (commentId: string) => {
     if (user) {
       try {
         const { data } = await axios.post(
-          `${baseURL}/api/posts/like`,
+          `${baseURL}/api/posts/comment/like`,
           {
-            post_id: postId,
+            comment_id: commentId,
           },
           { withCredentials: true }
         );
-        fetchPosts();
+        fetchComments();
       } catch (error) {
         console.log(error);
       }
@@ -32,7 +32,7 @@ function LikeComment({ user, fetchPosts, postId }: LikePostProps) {
   return (
     <IconButton
       onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-        likePost(postId)
+        likeComment(commentId)
       }
     >
       <ThumbUpAltIcon />
@@ -40,4 +40,4 @@ function LikeComment({ user, fetchPosts, postId }: LikePostProps) {
   );
 }
 
-export default LikeComment;
+export default Like;

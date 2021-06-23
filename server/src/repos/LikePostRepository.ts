@@ -1,6 +1,6 @@
 import { pool } from "../db";
 
-export class LikeRepository {
+export class LikePostRepository {
   static async insertOne(post_id: string, userID: string): Promise<number> {
     const result = await pool.query(
       `INSERT INTO post_reactions(id,post_id,user_id,created_at,updated_at)

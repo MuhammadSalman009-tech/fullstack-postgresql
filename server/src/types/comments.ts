@@ -5,4 +5,5 @@ export interface Comment {
   created_at: string;
   name: string;
   user_id: string;
+  likes: string;
 }

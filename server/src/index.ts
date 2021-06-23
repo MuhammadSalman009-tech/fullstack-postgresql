@@ -6,7 +6,8 @@ import { authRouter } from "./routes/AuthRouter";
 import cookieSession from "cookie-session";
 import cors from "cors";
 import { postLikeRouter } from "./routes/LikePostRouter";
-import { postCommentRouter } from "./routes/PostCommentsRouter";
+import { postCommentRouter } from "./routes/CommentRouter";
+import { commentLikeRouter } from "./routes/LikeCommentRouter";
 dotenv.config();
 
 const app = express();
@@ -46,6 +47,9 @@ app.use("/api/posts/like", postLikeRouter);
 
 //post-comments endpoint
 app.use("/api/posts/comment", postCommentRouter);
+
+//post-comments like endpoint
+app.use("/api/posts/comment/like", commentLikeRouter);
 
 app.listen(5000, () => {
   console.log("listnning on port 5000...");

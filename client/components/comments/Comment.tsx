@@ -2,6 +2,7 @@ import React from "react";
 import { CommentType } from "../../types/comments";
 import { User } from "../../types/user";
 import Delete from "./Delete";
+import Like from "./Like";
 interface CommentProps {
   comment: CommentType;
   fetchComments(): void;
@@ -18,6 +19,12 @@ function Comment({ comment, fetchComments, user }: CommentProps) {
         ) : (
           <div></div>
         )}
+        {comment.likes}
+        <Like
+          user={user}
+          fetchComments={fetchComments}
+          commentId={comment.id}
+        />
       </h6>
       <p>{comment.description}</p>
       <p>{comment.created_at}</p>
