@@ -14,10 +14,10 @@ postLikeRouter.post("/", requireAuth, async (req, res) => {
   const count = await LikeRepository.findById(body.post_id, user.userID);
   //if liked then unlike and vice versa
   if (count > 0) {
-    const unlike = LikeRepository.deleteOne(body.post_id, user.userID);
+    const unlike = await LikeRepository.deleteOne(body.post_id, user.userID);
     res.status(200).json({ msg: "unliked" });
   } else {
-    const like = LikeRepository.insertOne(body.post_id, user.userID);
+    const like = await LikeRepository.insertOne(body.post_id, user.userID);
     res.status(200).json({ msg: "liked" });
   }
 });

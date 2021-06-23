@@ -2,17 +2,22 @@ import axios from "axios";
 import React from "react";
 import { baseURL } from "../../types/urls";
 interface DeleteProps {
-  postId: string;
-  getPosts(): void;
+  commentId: string;
+  getComments(): void;
 }
-function Delete({ postId, getPosts }: DeleteProps) {
+function Delete({ commentId, getComments }: DeleteProps) {
   const deletePost = async () => {
+    console.log(commentId);
+
     try {
-      const deletedPost = await axios.delete(`${baseURL}/api/posts/${postId}`, {
-        withCredentials: true,
-      });
-      console.log(deletedPost);
-      getPosts();
+      const deletedComment = await axios.delete(
+        `${baseURL}/api/posts/comment/${commentId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(deletedComment);
+      getComments();
     } catch (error) {
       console.log(error);
     }

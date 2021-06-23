@@ -23,7 +23,6 @@ export default function Home({ postsData, user }: HomeProps) {
   const fetchPosts = async () => {
     try {
       const res = await axios.get<Post[]>(`${baseURL}/api/posts`);
-      console.log(res.data);
       setPosts(res.data);
     } catch (error) {
       console.log(error);

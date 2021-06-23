@@ -2,6 +2,7 @@ import express from "express";
 import { pool } from "../db";
 import { requireAuth } from "../middleware/AuthMiddleware";
 import { CommentRepository } from "../repos/CommentRepository";
+import { LikeRepository } from "../repos/LikeRepository";
 
 //post router object
 const postCommentRouter = express.Router();
@@ -33,6 +34,22 @@ postCommentRouter.post("/", requireAuth, async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).send(error);
+  }
+});
+
+//delete comment
+postCommentRouter.delete("/:id", requireAuth, async (req, res) => {
+  const id = req.params.id;
+  const user = req.user;
+  console.log(id, user.userID);
+  try {
+    const deletedCommentCount = await CommentRepository.deleteOne(
+      id,
+      user.userID
+    );
+    res.status(200).json({ deletedCommentCount });
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 

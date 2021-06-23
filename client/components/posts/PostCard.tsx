@@ -64,7 +64,11 @@ function PostCard({ post, user, fetchPosts }: PostProps) {
           )}
         </div>
         <div>
-          {hide ? <div></div> : <CommentList postId={post.id} show={show} />}
+          {hide ? (
+            <div></div>
+          ) : (
+            <CommentList postId={post.id} show={show} user={user} />
+          )}
         </div>
       </div>
     </div>

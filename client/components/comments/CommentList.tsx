@@ -1,14 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { baseURL } from "../../types/urls";
+import { User } from "../../types/user";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 interface CommentListProps {
   postId: string;
   show: string;
+  user: User;
 }
 
-function CommentList({ postId, show }: CommentListProps) {
+function CommentList({ postId, show, user }: CommentListProps) {
   const [comments, setComments] = useState([]);
   //fetch comments
   useEffect(() => {
@@ -35,7 +37,12 @@ function CommentList({ postId, show }: CommentListProps) {
         getComments={() => fetchComments(postId)}
       />
       {comments?.map((item) => (
-        <Comment comment={item} key={item.id} />
+        <Comment
+          comment={item}
+          key={item.id}
+          fetchComments={() => fetchComments(postId)}
+          user={user}
+        />
       ))}
     </div>
   ) : (

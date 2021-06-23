@@ -4,7 +4,7 @@ import { Comment } from "../types/comments";
 export class CommentRepository {
   static async findManyById(post_id: string): Promise<Comment[]> {
     const comments = await pool.query<Comment>(
-      `select c.post_id,c.description,c.created_at,c.id,u.name 
+      `select c.post_id,c.user_id,c.description,c.created_at,c.id,u.name 
         from comments as c 
         inner join users as u 
         ON u.id = c.user_id 
@@ -25,5 +25,12 @@ export class CommentRepository {
       [description, userID, post_id]
     );
     return newCommentCount.rowCount;
+  }
+  static async deleteOne(id: string, userID: string): Promise<number> {
+    const deletedPost = await pool.query(
+      "DELETE FROM comments c WHERE c.id=$1 AND c.user_id=$2",
+      [id, userID]
+    );
+    return deletedPost.rowCount;
   }
 }
