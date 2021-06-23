@@ -6,7 +6,7 @@ import CommentIcon from "@material-ui/icons/Comment";
 import { User } from "../../types/user";
 import Delete from "./Delete";
 import CommentList from "../comments/CommentList";
-import LikePost from "../likes/LikePost";
+import LikePost from "./LikePost";
 interface PostProps {
   post: Post;
   user: User;
@@ -38,7 +38,6 @@ function PostCard({ post, user, fetchPosts }: PostProps) {
         <div>
           <strong>Likes:</strong>
           {post.likes}
-          {/* <TotalLikes postId={item.id} /> */}
         </div>
         <div className="delete-section">
           <div>
